@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h2>Here is my second work to show.</h2>
+        <p>My second work is some photos.</p>
+        <img src="{{ url_for('static',filename='second_work.jpg') }}" class="img-fluid"/>
+        <p>...another images</p>
+    </div>
+{% endblock %}
