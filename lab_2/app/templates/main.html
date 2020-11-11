@@ -4,7 +4,7 @@
     <div class="container">
         <div class="text-center">
 
-            <h2>Hi, my name is <i>{{fullname}}</i>.</h2>
+            <h2>Hi{{ ' '+current_user.username if current_user.username else '' }}, my name is <i>{{fullname}}</i>.</h2>
 
             <img src="{{ url_for('static',filename='my_photo.jpg') }}" class="img-thumbnail my-img mt-3 mb-3"/>
 

@@ -1,4 +1,5 @@
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, request
+from flask_login import current_user, login_user, logout_user, login_required
 
 from app import app, db
 from app import bcrypt
@@ -35,6 +36,8 @@ def posts():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main'))
     form = LoginForm()
     if form.validate_on_submit():
         email = form.email.data
@@ -43,8 +46,13 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if user and bcrypt.check_password_hash(user.password_hash, password):
-            flash("Sing in successfully")
-            return redirect(url_for('main'))
+            flash("Sing in successfully", "success")
+            login_user(user, remember=form.remember_me.data)
+            next_page = request.args.get('next')
+            if next_page:
+                return redirect(next_page)
+            else:
+                return redirect(url_for('main'))
         else:
             flash('Login or password is incorrect', 'warning')
     return render_template('login.html', form=form)
@@ -52,6 +60,8 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main'))
     form = RegistrationForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -65,3 +75,15 @@ def register():
         db.session.commit()
         flash("Sing up successfully")
     return render_template('register.html', form=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('main'))
+
+
+@app.route('/account')
+@login_required
+def account():
+    return render_template('account.html', title='Account')
