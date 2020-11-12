@@ -15,5 +15,6 @@ bcrypt = Bcrypt(app)
 login = LoginManager(app)
 login.login_view = 'login'
 login.login_message_category = 'info'
+login.session_protection = "strong"
 
 from app import views, models
