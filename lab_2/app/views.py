@@ -1,5 +1,6 @@
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
+from werkzeug.urls import url_parse
 
 from app import app, db
 from app import bcrypt
@@ -49,10 +50,9 @@ def login():
             flash("Sing in successfully", "success")
             login_user(user, remember=form.remember_me.data)
             next_page = request.args.get('next')
-            if next_page:
-                return redirect(next_page)
-            else:
-                return redirect(url_for('main'))
+            if not next_page or url_parse(next_page).netloc != '':
+                next_page = url_for('main')
+            return redirect(next_page)
         else:
             flash('Login or password is incorrect', 'warning')
     return render_template('login.html', form=form)
