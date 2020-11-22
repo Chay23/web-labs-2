@@ -9,7 +9,7 @@ from werkzeug.urls import url_parse
 
 from app import app, db
 from app import bcrypt
-from app.forms import LoginForm, RegistrationForm, UpdateAccountForm
+from app.forms import LoginForm, RegistrationForm, UpdateAccountForm, PostCreationForm, PostEditingForm
 from .models import User, Post
 
 
@@ -38,6 +38,63 @@ def second_work():
 def posts():
     posts = Post.query.all()
     return render_template('posts.html', posts=posts)
+
+
+@app.route('/post/<int:id>')
+def post(id):
+    post = Post.query.filter_by(id=id).first()
+    return render_template('post.html', post=post)
+
+
+@app.route('/create_post', methods=['GET', 'POST'])
+@login_required
+def create_post():
+    form = PostCreationForm()
+    if form.validate_on_submit():
+        post_title = form.post_title.data
+        post_body = form.post_body.data
+
+        post = Post(title=post_title, body=post_body, author=current_user)
+
+        db.session.add(post)
+        db.session.commit()
+        flash("Post created successfully")
+    return render_template('create_post.html', form=form)
+
+
+@app.route('/edit_post/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_post(id):
+    form = PostEditingForm()
+    post = Post.query.filter_by(id=id).first()
+    if form.validate_on_submit():
+        if current_user.username != post.author.username:
+            return redirect(url_for('main'))
+        post.title = form.post_title.data
+        post.body = form.post_body.data
+        post.update_time = datetime.utcnow()
+
+        db.session.commit()
+        flash("Post edited successfully")
+
+    elif request.method == 'GET':
+        if current_user.username != post.author.username:
+            return redirect(url_for('main'))
+        form.post_title.data = post.title
+        form.post_body.data = post.body
+    return render_template('edit_post.html', form=form, post=post)
+
+
+@app.route('/delete_post/<int:id>', methods=["GET", "DELETE"])
+@login_required
+def delete_post(id):
+    post = Post.query.filter_by(id=id).first()
+    if current_user.username != post.author.username:
+        return redirect(url_for('main'))
+
+    db.session.delete(post)
+    db.session.commit()
+    return redirect(url_for('posts'))
 
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -19,6 +19,7 @@
         <a class="p-2 text-dark" href="{{url_for('second_work')}}">Second work</a>
         {% if current_user.is_active %}
          <a class="p-2 text-dark" href="{{url_for('account')}}">Account</a>
+         <a class="p-2 text-dark" href="{{url_for('create_post')}}">New post</a>
         {% endif %}
         <a class="p-2 text-dark" href="{{url_for('posts')}}">Posts</a>
         {% if current_user.is_active %}

@@ -28,7 +28,7 @@ def recreate():
 def init_data():
     u = User(username="User1", email="example@mail.com", password_hash="pass1234")
     db.session.add(u)
-    p = Post(body="Post example", author=u)
+    p = Post(title="Title", body="Post example", author=u)
     db.session.add(p)
     db.session.commit()
     print("Initialization completed")

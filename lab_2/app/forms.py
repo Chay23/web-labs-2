@@ -75,3 +75,15 @@ class UpdateAccountForm(FlaskForm):
         if self.old_password.data:
             if self.new_password.data != self.confirm_new_password.data:
                 raise ValidationError('New password didn\'t match')
+
+
+class PostCreationForm(FlaskForm):
+    post_title = StringField('Post title', validators=[DataRequired()])
+    post_body = TextAreaField('Post body', render_kw={'rows': 5},  validators=[DataRequired()])
+    submit = SubmitField('Create')
+
+
+class PostEditingForm(FlaskForm):
+    post_title = StringField('Post title', validators=[DataRequired()])
+    post_body = TextAreaField('Post body', render_kw={'rows': 5},  validators=[DataRequired()])
+    submit = SubmitField('Edit')
