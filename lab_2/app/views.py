@@ -12,10 +12,7 @@ from app import bcrypt
 from app.forms import LoginForm, RegistrationForm, UpdateAccountForm, PostCreationForm, PostEditingForm
 from .models import User, Post
 
-
-# @app.route('/main')
-# def index():
-#     return render_template('index.html', name='Інженерія програмного забезпечення', title='PNU')
+ROWS_PER_PAGE = 5
 
 
 @app.route('/')
@@ -36,8 +33,16 @@ def second_work():
 
 @app.route('/posts')
 def posts():
-    posts = Post.query.all()
-    return render_template('posts.html', posts=posts)
+    q = request.args.get('q')
+    page = request.args.get('page', 1, type=int)
+    if q:
+        posts = Post.query.filter(Post.title.contains(q) | Post.body.contains(q))
+    else:
+        posts = Post.query.order_by(Post.timestamp.desc())
+        # print(posts.all())
+
+    pages = posts.paginate(page=page, per_page=ROWS_PER_PAGE)
+    return render_template('posts.html', posts=posts, pages=pages, q=q)
 
 
 @app.route('/post/<int:id>')
@@ -59,6 +64,7 @@ def create_post():
         db.session.add(post)
         db.session.commit()
         flash("Post created successfully")
+        return redirect(url_for('posts'))
     return render_template('create_post.html', form=form)
 
 
