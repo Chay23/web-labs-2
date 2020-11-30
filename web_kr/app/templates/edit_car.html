@@ -11,7 +11,7 @@
         </ul>
         {%endfor %}
         {% from "_render_field.html" import render_field %}
-        <form action="{{url_for('edit_car')}}" method="post" novalidate>
+        <form action="{{url_for('edit_car', id=id)}}" method="post" novalidate>
             {{ form.hidden_tag() }}
             {{ render_field(form.license_plate) }}
             {{ render_field(form.brand) }}

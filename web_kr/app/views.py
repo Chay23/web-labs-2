@@ -25,11 +25,11 @@ def edit_car(id):
     if form.validate_on_submit():
 
         car.license_plate = form.license_plate.data
-        car.brand = car.brand.data
-        car.condition = car.condition.data
-        car.on_go = car.on_go.data
-        car.price = car.price.data
-        car.prod_date = car.prod_date.data
+        car.brand = form.brand.data
+        car.condition_id = form.condition.data
+        car.on_go = form.on_go.data
+        car.price = form.price.data
+        car.prod_date = form.prod_date.data
 
         flash("Post edited successfully")
         db.session.commit()
@@ -40,8 +40,7 @@ def edit_car(id):
         form.condition.data = car.condition
         form.on_go.data = car.on_go
         form.price.data = car.price
-        # form.prod_date = car.prod_date
-    return render_template('edit_car.html', form=form)
+    return render_template('edit_car.html', form=form, id=id)
 
 
 @app.route('/new_car', methods=['GET', 'POST'])
@@ -57,7 +56,6 @@ def new_car():
         o_g = form.on_go.data
         p = form.price.data
         p_d = form.prod_date.data
-        # condition = db.session.query(Condition).filter_by(name=c).first()
         car = Car(license_plate=l_p, brand=b, condition_id=form.condition.data, on_go=o_g, price=p, prod_date=p_d)
         db.session.add(car)
         db.session.commit()
