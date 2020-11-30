@@ -39,7 +39,6 @@ def posts():
         posts = Post.query.filter(Post.title.contains(q) | Post.body.contains(q))
     else:
         posts = Post.query.order_by(Post.timestamp.desc())
-        # print(posts.all())
 
     pages = posts.paginate(page=page, per_page=ROWS_PER_PAGE)
     return render_template('posts.html', posts=posts, pages=pages, q=q)
@@ -118,6 +117,8 @@ def login():
             flash("Sing in successfully", "success")
             login_user(user, remember=form.remember_me.data)
             next_page = request.args.get('next')
+            # print("login next",next_page)
+            # return redirect(next_page)
             if not next_page or url_parse(next_page).netloc != '':
                 next_page = url_for('main')
             return redirect(next_page)

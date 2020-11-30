@@ -1,6 +1,10 @@
+from flask import url_for, request
+from flask_admin import AdminIndexView
+from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
+from werkzeug.utils import redirect
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError, Regexp
 
@@ -79,11 +83,36 @@ class UpdateAccountForm(FlaskForm):
 
 class PostCreationForm(FlaskForm):
     post_title = StringField('Post title', validators=[DataRequired()])
-    post_body = TextAreaField('Post body', render_kw={'rows': 5},  validators=[DataRequired()])
+    post_body = TextAreaField('Post body', render_kw={'rows': 5}, validators=[DataRequired()])
     submit = SubmitField('Create')
 
 
 class PostEditingForm(FlaskForm):
     post_title = StringField('Post title', validators=[DataRequired()])
-    post_body = TextAreaField('Post body', render_kw={'rows': 5},  validators=[DataRequired()])
+    post_body = TextAreaField('Post body', render_kw={'rows': 5}, validators=[DataRequired()])
     submit = SubmitField('Edit')
+
+
+class MyIndexView(AdminIndexView):
+    def is_accessible(self):
+        return current_user.is_authenticated  # and current_user.is_admin()
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('login', next=request.url))
+
+
+class MyAccessModelView(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated  # and current_user.is_admin()
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('login', next=request.url))
+
+
+class PostModelView(MyAccessModelView):
+    column_exclude_list = ['timestamp', ]
+    column_searchable_list = ['id', ]
+    column_sortable_list = ('title', 'update_time')
+    column_filters = ['title', 'timestamp']
