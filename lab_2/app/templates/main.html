@@ -1,23 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container">
-        <div class="text-center">
+<div class="container">
+    <div class="text-center">
+        {% for cat, msg in get_flashed_messages(True) %}
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-{{cat}}">{{msg}}</li>
+        </ul>
+        {% endfor %}
+        <h2>Hi{{ ' '+current_user.username if current_user.username else '' }}, my name is <i>{{fullname}}</i>.</h2>
 
-            <h2>Hi{{ ' '+current_user.username if current_user.username else '' }}, my name is <i>{{fullname}}</i>.</h2>
+        <img src="{{ url_for('static',filename='my_photo.jpg') }}" class="img-thumbnail my-img mt-3 mb-3"/>
 
-            <img src="{{ url_for('static',filename='my_photo.jpg') }}" class="img-thumbnail my-img mt-3 mb-3"/>
+        <p>I'm 20 years old.</p>
+        <p>I am a fourth year student.</p>
+        <p>I like to create sites and take a photo of nature.</p>
+        <p>Here are some of my works:</p>
 
-            <p>I'm 20 years old.</p>
-            <p>I am a fourth year student.</p>
-            <p>I like to create sites and take a photo of nature.</p>
-            <p>Here are some of my works:</p>
+        <ul class="list-group works text-center">
+            <li class="list-group-item"><a href="{{ url_for('first_work') }}">Restaurant site</a></li>
+            <li class="list-group-item"><a href="{{ url_for('second_work') }}">Photos</a></li>
+        </ul>
 
-            <ul class="list-group works text-center">
-                <li class="list-group-item"><a href="{{ url_for('first_work') }}">Restaurant site</a></li>
-                <li class="list-group-item"><a href="{{ url_for('second_work') }}">Photos</a></li>
-            </ul>
-
-        </div>
     </div>
+</div>
 {% endblock %}

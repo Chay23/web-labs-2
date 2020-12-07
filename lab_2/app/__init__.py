@@ -22,10 +22,10 @@ login.session_protection = "strong"
 
 #admin flask
 from .models import User, Post
-from app.forms import PostModelView, MyIndexView
+from app.forms import PostModelView, MyIndexView, UserAdminView
 
 admin = Admin(app, name='Blog', template_mode='bootstrap3', index_view=MyIndexView())
-admin.add_view(ModelView(User, db.session))
+admin.add_view(UserAdminView(User, db.session))
 admin.add_view(PostModelView(Post, db.session))
 admin.add_view(FileAdmin(app.config['STATIC_DIR'], '/static/', name='Static Files'))
 

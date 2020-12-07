@@ -1,6 +1,7 @@
 import os
 import secrets
 from datetime import datetime
+from functools import wraps
 
 from PIL import Image
 from flask import render_template, redirect, url_for, flash, request
@@ -9,10 +10,94 @@ from werkzeug.urls import url_parse
 
 from app import app, db
 from app import bcrypt
-from app.forms import LoginForm, RegistrationForm, UpdateAccountForm, PostCreationForm, PostEditingForm
+from app.forms import LoginForm, RegistrationForm, UpdateAccountForm, PostCreationForm, PostEditingForm, \
+    AdminUserCreateForm, AdminUserUpdateForm
 from .models import User, Post
 
 ROWS_PER_PAGE = 5
+
+
+def admin_login_required(func):
+    @wraps(func)
+    def check(*args, **kwargs):
+        if current_user.is_admin():
+            return func(*args, **kwargs)
+        flash('You are not admin')
+        return redirect(url_for('main'))
+
+    return check
+
+
+# Custom admin start
+@app.route('/admin_custom')
+@login_required
+@admin_login_required
+def home_admin():
+    return render_template('admin-home.html')
+
+
+@app.route('/admin_custom/users-list')
+@login_required
+@admin_login_required
+def users_list_admin():
+    users = User.query.all()
+    return render_template('users-list-admin.html', users=users)
+
+
+@app.route('/admin_custom/create-user', methods=['GET', 'POST'])
+@login_required
+@admin_login_required
+def user_create_admin():
+    form = AdminUserCreateForm()
+
+    if form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        admin = form.admin.data
+
+        hashed = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        user = User(username=username, email=email, password_hash=hashed, admin=admin)
+        db.session.add(user)
+        db.session.commit()
+        flash("Create successfully")
+        return redirect(url_for('users_list_admin'))
+    return render_template('user-create-admin.html', form=form)
+
+
+@app.route('/admin_custom/update-user/<int:id>', methods=['GET', 'POST'])
+@login_required
+@admin_login_required
+def user_update_admin(id):
+    form = AdminUserUpdateForm()
+    user = User.query.get(id)
+    print(user)
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+        user.admin = form.admin.data
+        db.session.commit()
+        flash('User has been updated!', 'success')
+        return redirect(url_for('users_list_admin'))
+    elif request.method == 'GET':
+        form.username.data = user.username
+        form.email.data = user.email
+        form.admin.data = user.admin
+    return render_template('user-update-admin.html', form=form, user=user)
+
+
+@app.route('/admin_custom/delete/<int:id>')
+@login_required
+@admin_login_required
+def user_delete_admin(id):
+    user = User.query.get(id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('User Deleted.')
+    return redirect(url_for('users_list_admin'))
+
+# Custom admin end
 
 
 @app.route('/')
@@ -22,6 +107,7 @@ def main():
 
 
 @app.route('/first')
+@admin_login_required
 def first_work():
     return render_template('first_work.html')
 
