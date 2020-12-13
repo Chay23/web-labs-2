@@ -4,19 +4,18 @@
 
 <div class="container">
     <div class="text-center">
-        <h1>Sign Up</h1>
+        <h1>Sign In</h1>
         {% for cat, msg in get_flashed_messages(True) %}
         <ul class="list-group">
             <li class="list-group-item list-group-item-{{cat}}">{{msg}}</li>
         </ul>
         {%endfor %}
         {% from "_render_field.html" import render_field %}
-        <form action="{{url_for('register')}}" method="post" novalidate>
+        <form method="post" action="{{ url_for('user_bp.login', next=request.args.get('next')) }}">
             {{ form.hidden_tag() }}
-            {{ render_field(form.username) }}
             {{ render_field(form.email) }}
             {{ render_field(form.password) }}
-            {{ render_field(form.password_confirm) }}
+            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
             <p>{{ form.submit(class='btn btn-primary') }}</p>
         </form>
 

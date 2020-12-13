@@ -14,6 +14,11 @@ Blog
         </div>
     </form>
     <div class="text-center">
+        {% for cat, msg in get_flashed_messages(True) %}
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-{{cat}}">{{msg}}</li>
+        </ul>
+        {% endfor %}
         {% for post in pages.items %}
         <h1>{{post.title}}</h1>
         <h5 style="font-size: 25px;">{{post.body}}</h5>
@@ -21,15 +26,15 @@ Blog
         <inline>Created: {{post.timestamp}}</inline>
         <inline>Updated: {{post.update_time}}</inline>
         <p></p>
-        <a class="btn btn-primary" href="{{url_for('post', id=post.id)}}">Open</a>
+        <a class="btn btn-primary" href="{{url_for('post_bp.post', id=post.id)}}">Open</a>
         {% if current_user.username == post.author.username %}
-        <inline><a class="btn btn-primary" href="{{url_for('edit_post', id=post.id)}}">Edit</a></inline>
+        <inline><a class="btn btn-primary" href="{{url_for('post_bp.edit_post', id=post.id)}}">Edit</a></inline>
         {% endif %}
         <hr>
         {% endfor %}
 
         <div class="text-right">
-            <a href="{{ url_for('posts', page=pages.prev_num, q=q) }}"
+            <a href="{{ url_for('post_bp.posts', page=pages.prev_num, q=q) }}"
                class="btn btn-outline-dark
        {% if pages.page == 1 %}disabled{% endif %}">
                 &laquo;
@@ -38,12 +43,12 @@ Blog
             {% for page_num in pages.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
             {% if page_num %}
             {% if pages.page == page_num %}
-            <a href="{{ url_for('posts', page=page_num, q=q) }}"
+            <a href="{{ url_for('post_bp.posts', page=page_num, q=q) }}"
                class="btn btn-dark">
                 {{ page_num }}
             </a>
             {% else %}
-            <a href="{{ url_for('posts', page=page_num, q=q) }}"
+            <a href="{{ url_for('post_bp.posts', page=page_num, q=q) }}"
                class="btn btn-outline-dark">
                 {{ page_num }}
             </a>
@@ -53,7 +58,7 @@ Blog
             {% endif %}
             {% endfor %}
 
-            <a href="{{ url_for('posts', page=pages.next_num, q=q) }}"
+            <a href="{{ url_for('post_bp.posts', page=pages.next_num, q=q) }}"
                class="btn btn-outline-dark
        {% if pages.page == pages.pages %}disabled{% endif %}">
                 &raquo;

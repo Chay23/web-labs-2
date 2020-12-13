@@ -14,19 +14,18 @@
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm grad">
     <h5 class="my-0 mr-md-auto font-weight-normal">Have a nice day :)</h5>
     <nav class="my-2 my-md-0 mr-md-3">
-        <a class="p-2 text-dark" href="{{url_for('main')}}">Home</a>
-        <a class="p-2 text-dark" href="{{url_for('first_work')}}">First work</a>
-        <a class="p-2 text-dark" href="{{url_for('second_work')}}">Second work</a>
+        <a class="p-2 text-dark" href="{{url_for('post_bp.posts')}}">Main</a>
+
         {% if current_user.is_active %}
-         <a class="p-2 text-dark" href="{{url_for('account')}}">Account</a>
-         <a class="p-2 text-dark" href="{{url_for('create_post')}}">New post</a>
+         <a class="p-2 text-dark" href="{{url_for('user_bp.account')}}">Account</a>
+         <a class="p-2 text-dark" href="{{url_for('post_bp.create_post')}}">New post</a>
         {% endif %}
-        <a class="p-2 text-dark" href="{{url_for('posts')}}">Posts</a>
+
         {% if current_user.is_active %}
-        <a class="p-2 text-dark" href="{{url_for('logout')}}">Logout</a>
+        <a class="p-2 text-dark" href="{{url_for('user_bp.logout')}}">Logout</a>
         {% else %}
-        <a class="p-2 text-dark" href="{{url_for('login')}}">Login</a>
-        <a class="p-2 text-dark" href="{{url_for('register')}}">Registration</a>
+        <a class="p-2 text-dark" href="{{url_for('user_bp.login')}}">Login</a>
+        <a class="p-2 text-dark" href="{{url_for('user_bp.register')}}">Registration</a>
         {% endif %}
     </nav>
 </div>

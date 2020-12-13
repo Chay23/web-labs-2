@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="text-center">
+        <h1>Welcome to Admin demo</h1>
+        <ul class="list-group works text-center">
+            <a class="list-group-item" href="{{url_for('custom_admin_bp.users_list_admin')}}">List of users</a>
+            <a class="list-group-item" href="{{url_for('custom_admin_bp.user_create_admin')}}">Create a new user</a>
+            <a class="list-group-item" href="{{url_for('custom_admin_bp.logout')}}">Logout</a>
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

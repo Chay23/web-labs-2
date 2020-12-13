@@ -4,18 +4,17 @@
 
 <div class="container">
     <div class="text-center">
-        <h1>Sign In</h1>
+        <h1>New post</h1>
         {% for cat, msg in get_flashed_messages(True) %}
         <ul class="list-group">
             <li class="list-group-item list-group-item-{{cat}}">{{msg}}</li>
         </ul>
         {%endfor %}
         {% from "_render_field.html" import render_field %}
-        <form method="post" action="{{ url_for('login', next=request.args.get('next')) }}">
+        <form action="{{url_for('post_bp.create_post')}}" method="post" novalidate>
             {{ form.hidden_tag() }}
-            {{ render_field(form.email) }}
-            {{ render_field(form.password) }}
-            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+            {{ render_field(form.post_title) }}
+            {{ render_field(form.post_body) }}
             <p>{{ form.submit(class='btn btn-primary') }}</p>
         </form>
 

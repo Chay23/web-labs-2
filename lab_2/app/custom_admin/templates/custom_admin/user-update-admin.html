@@ -3,21 +3,22 @@
 {% block content %}
 
 <div class="container">
+    <a class="mb-2 btn btn-primary" href="{{url_for('custom_admin_bp.users_list_admin')}}">Back</a>
     <div class="text-center">
-        <h1>New post</h1>
         {% for cat, msg in get_flashed_messages(True) %}
         <ul class="list-group">
             <li class="list-group-item list-group-item-{{cat}}">{{msg}}</li>
         </ul>
         {%endfor %}
         {% from "_render_field.html" import render_field %}
-        <form action="{{url_for('create_post')}}" method="post" novalidate>
+        <form action="{{url_for('custom_admin_bp.user_update_admin', id=user.id)}}" method="post" novalidate>
             {{ form.hidden_tag() }}
-            {{ render_field(form.post_title) }}
-            {{ render_field(form.post_body) }}
+            {{ render_field(form.username) }}
+            {{ render_field(form.email) }}
+            {{ render_field(form.admin) }}
             <p>{{ form.submit(class='btn btn-primary') }}</p>
         </form>
-
     </div>
 </div>
+
 {% endblock %}
