@@ -9,3 +9,5 @@ class Config(object):
                               'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     STATIC_DIR = basedir + '\\app\\static'
+
+    APP_SETTINGS = os.environ.get('APP_SETTINGS') or "config.DevelopmentConfig"
