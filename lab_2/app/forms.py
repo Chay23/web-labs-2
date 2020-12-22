@@ -16,7 +16,7 @@ class MyIndexView(AdminIndexView):
 
     def inaccessible_callback(self, name, **kwargs):
         # redirect to login page if user doesn't have access
-        return redirect(url_for('login', next=request.url))
+        return redirect(url_for('user_bp.login', next=request.url))
 
 
 class MyAccessModelView(ModelView):
@@ -25,7 +25,7 @@ class MyAccessModelView(ModelView):
 
     def inaccessible_callback(self, name, **kwargs):
         # redirect to login page if user doesn't have access
-        return redirect(url_for('login', next=request.url))
+        return redirect(url_for('user_bp.login', next=request.url))
 
 
 class UserAdminView(MyAccessModelView):

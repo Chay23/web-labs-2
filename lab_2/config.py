@@ -8,6 +8,6 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
                               'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    STATIC_DIR = basedir + '\\app\\static'
+    STATIC_DIR = os.path.join(basedir, 'app/static')
 
     APP_SETTINGS = os.environ.get('APP_SETTINGS') or "config.DevelopmentConfig"
