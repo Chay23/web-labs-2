@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <a class="mb-2 btn btn-primary" href="{{url_for('custom_admin_bp.home_admin')}}">Back</a>
+    <div class="text-center">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover model-list">
+                <thead>
+                <tr>
+                    <th class="column-header col-username">
+                        <h6>ID</h6>
+                    </th>
+                    <th class="column-header col-username">
+                        <h6>Username</h6>
+                    </th>
+                    <th class="column-header col-username">
+                        <h6>IsAdmin</h6>
+                    </th>
+                    <th class="column-header col-username">
+                    </th>
+                    <th class="column-header col-username">
+                    </th>
+                </tr>
+                </thead>
+                {% for user in users %}
+                <tr>
+                <td>
+                    {{user.id}}
+                </td>
+                <td>
+                    {{user.username}}
+                </td>
+                <td>
+                    {{user.is_admin()}}
+                </td>
+                <td>
+                    <a class="btn btn-primary" href="{{url_for('custom_admin_bp.user_update_admin', id=user.id)}}">Edit</a>
+                </td>
+                <td>
+                    <a class="btn btn-danger" href="{{url_for('custom_admin_bp.user_delete_admin', id=user.id)}}">Delete</a></p>
+                </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

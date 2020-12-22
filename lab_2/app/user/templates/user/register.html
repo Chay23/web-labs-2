@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="text-center">
+        <h1>Sign Up</h1>
+        {% for cat, msg in get_flashed_messages(True) %}
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-{{cat}}">{{msg}}</li>
+        </ul>
+        {%endfor %}
+        {% from "_render_field.html" import render_field %}
+        <form action="{{url_for('user_bp.register')}}" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            {{ render_field(form.username) }}
+            {{ render_field(form.email) }}
+            {{ render_field(form.password) }}
+            {{ render_field(form.password_confirm) }}
+            <p>{{ form.submit(class='btn btn-primary') }}</p>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
