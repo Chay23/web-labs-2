@@ -37,7 +37,6 @@ def token_required(f):
 @api_post_bp.route('/token', methods=['GET', 'POST'])
 def get_token():
     auth = request.authorization
-    print(config.Config.SECRET_KEY)
     if not auth or not auth.username or not auth.password:
         return jsonify({'details': 'Invalid data'})
     user = User.query.filter_by(username=auth.username).first()
@@ -55,7 +54,6 @@ def get_token():
 @api_post_bp.route('posts', methods=['GET'])
 @token_required
 def api_get_posts(current_user, post_id=None):
-    print(current_user.id)
     if post_id:
         post = Post_API.query.filter_by(id=post_id).first()
         print(post)
