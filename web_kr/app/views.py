@@ -1,72 +1,75 @@
-import datetime
+from datetime import datetime
+
+from flask import request, jsonify
 
 from app import app, db
-from app.forms import NewCarForm, EditCarForm
-from .models import Car, Condition
-from flask import render_template, redirect, url_for, flash, request
+from .models import Car
 
-@app.route('/', methods=['GET', 'POST'])
-def main():
-    q = request.args.get('q')
-    if q:
-        cars = Car.query.filter(Car.license_plate.contains(q) | Car.brand.contains(q))
+
+@app.route('/cars/<int:car_id>', methods=['GET'])
+@app.route('/cars', methods=['GET'])
+def get_cars(car_id=None):
+    if car_id:
+        car = Car.query.filter_by(id=car_id).first()
+        if not car:
+            return jsonify({"details": "Not found"})
+        result = {'id': car.id,
+                  'license_plate': car.license_plate,
+                  'brand': car.brand,
+                  'condition_id': car.condition_id,
+                  'on_go': car.on_go,
+                  'price': car.price,
+                  'prod_date': car.prod_date
+                  }
+        return jsonify(result)
     else:
-        cars = Car.query.order_by(Car.prod_date.desc())
-    return render_template('main.html', cars=cars)
+        cars = Car.query.all()
+        result = []
+        for car in cars:
+            result.append({'id': car.id,
+                           'license_plate': car.license_plate,
+                           'brand': car.brand,
+                           'condition_id': car.condition_id,
+                           'on_go': car.on_go,
+                           'price': car.price,
+                           'prod_date': car.prod_date
+                           })
+        return jsonify(result)
 
 
-@app.route('/edit/<int:id>', methods=['GET', 'POST'])
-def edit_car(id):
-    available_cond = db.session.query(Condition).all()
-    cond_list = [(i.id, i.name) for i in available_cond]
-    form = EditCarForm()
-    form.condition.choices = cond_list
-    car = Car.query.filter_by(id=id).first()
-    if form.validate_on_submit():
-
-        car.license_plate = form.license_plate.data
-        car.brand = form.brand.data
-        car.condition_id = form.condition.data
-        car.on_go = form.on_go.data
-        car.price = form.price.data
-        car.prod_date = form.prod_date.data
-
-        flash("Post edited successfully")
-        db.session.commit()
-        redirect(url_for('main'))
-    elif request.method == 'GET':
-        form.license_plate.data = car.license_plate
-        form.brand.data = car.brand
-        form.condition.data = car.condition
-        form.on_go.data = car.on_go
-        form.price.data = car.price
-    return render_template('edit_car.html', form=form, id=id)
-
-
-@app.route('/new_car', methods=['GET', 'POST'])
-def new_car():
-    available_cond = db.session.query(Condition).all()
-    form = NewCarForm()
-    cond_list = [(i.id, i.name) for i in available_cond]
-    form.condition.choices = cond_list
-    if form.validate_on_submit():
-        l_p = form.license_plate.data
-        b = form.brand.data
-        c = form.condition.data
-        o_g = form.on_go.data
-        p = form.price.data
-        p_d = form.prod_date.data
-        car = Car(license_plate=l_p, brand=b, condition_id=form.condition.data, on_go=o_g, price=p, prod_date=p_d)
-        db.session.add(car)
-        db.session.commit()
-        flash("Car created successfully")
-    return render_template('new_car.html', form=form)
-
-
-@app.route('/delete/<int:id>', methods=["GET", "DELETE"])
-def delete_car(id):
-    car = Car.query.filter_by(id=id).first()
-
-    db.session.delete(car)
+@app.route('/cars/<int:car_id>', methods=['PUT'])
+def edit_car(car_id):
+    car = Car.query.filter_by(id=car_id).first()
+    if not car:
+        return jsonify({'details': 'Not found'})
+    post_data = request.json
+    car.license_plate = post_data['license_plate']
+    car.brand = post_data['brand']
+    car.condition_id = post_data['condition_id']
+    car.on_go = post_data['on_go']
+    car.price = post_data['price']
+    car.prod_date = datetime.utcnow()
     db.session.commit()
-    return redirect(url_for('main'))
+    return jsonify({'details': 'Success'})
+
+
+@app.route('/cars', methods=['POST'])
+def create_car():
+    post_data = request.json
+    car = Car(license_plate=post_data['license_plate'], brand=post_data['brand'],
+              condition_id=post_data['condition_id'], on_go=post_data['on_go'], price=post_data['price'],
+              prod_date=datetime.utcnow())
+    db.session.add(car)
+    db.session.commit()
+    return jsonify({'details': 'Success'})
+
+
+@app.route('/cars/<int:car_id>', methods=["GET", "DELETE"])
+def delete_car(car_id):
+    car = Car.query.filter_by(id=car_id).first()
+    if not car:
+        return jsonify({'detail': 'Not found'})
+    else:
+        db.session.delete(car)
+        db.session.commit()
+        return jsonify({'details': 'Success'})
